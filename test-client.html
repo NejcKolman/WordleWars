@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <body>
-    <h1>WebSocket Test</h1>
+    <h1>WORDLE WARS</h1>
 
     <div id="playerInfo">
       playerName
@@ -21,7 +21,7 @@
       const playUrl = location.href.substr(0, location.href.lastIndexOf("/")) + "/play.html" + `?${playerName}&${lobbyID}`;
       location.href = playUrl;
     }
-    const ws = new WebSocket("ws://localhost:3000");
+    const ws = new WebSocket("wss://wordlewars-production.up.railway.app");
 
     ws.onopen = () => {
       console.log("Connected to server");

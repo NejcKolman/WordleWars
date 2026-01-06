@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <h1>WebSocket Test</h1>
+
+    <div id="playerInfo">
+      playerName
+      <input type="text" id="playerName" />
+      lobbyID
+      <input type="text" id="lobbyID" />
+    </div>
+    <button id="joinButton" onclick="joinLobby()">join lobby</button>
+  </body>
+
+  <script>
+    function joinLobby() {
+      const playerName = document.getElementById("playerName").value;
+      const lobbyID = document.getElementById("lobbyID").value;
+      console.log(playerName);
+      console.log(lobbyID);
+      const playUrl = location.href.substr(0, location.href.lastIndexOf("/")) + "/play.html" + `?${playerName}&${lobbyID}`;
+      location.href = playUrl;
+    }
+    const ws = new WebSocket("ws://localhost:3000");
+
+    ws.onopen = () => {
+      console.log("Connected to server");
+      ws.send(
+        JSON.stringify({
+          type: "JOIN_LOBBY",
+          player: playerName,
+          lobbyID: lobbyID,
+        })
+      );
+    };
+    ws.onmessage = (event) => {
+      console.log("Message from server:", event.data);
+    };
+    ws.onclose = () => {
+      console.log("Disconnected from server");
+    };
+
+    guessWord = document.getElementById("guessWord");
+    function guessClick() {
+      if (guessWord.value.length != 5) {
+        console.log("the word needs 5 letters");
+      } else {
+        ws.send(
+          JSON.stringify({
+            type: "GUESS",
+            player: playerName,
+            lobbyID: lobbyID,
+            guessWord: guessWord.value,
+          })
+        );
+      }
+      console.log(guessWord.value);
+    }
+  </script>
+</html>

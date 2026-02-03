@@ -1,0 +1,37 @@
+body {
+  display: flex;
+  justify-content: center; /* horizontal */
+  align-items: center; /* vertical */
+  flex-direction: column;
+  background-color: rgb(212, 201, 161);
+}
+
+.title {
+  font-size: 80px;
+}
+
+.playerInfo,
+.newLobby,
+.oldLobby {
+  font-size: 30px;
+  margin-bottom: 30px;
+  display: flex;
+  justify-content: center; /* horizontal */
+  align-items: center; /* vertical */
+  flex-direction: column;
+}
+
+input {
+  width: 200px;
+  height: 40px;
+  font-size: 40px;
+}
+button {
+  font-size: 30px;
+  color: white;
+  background-color: rgb(50, 90, 50);
+  padding: 10px;
+  border: none;
+  border-radius: 20px;
+  font-weight: 500;
+}

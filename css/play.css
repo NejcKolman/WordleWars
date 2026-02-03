@@ -73,12 +73,6 @@
   align-items: center;
   overflow-y: auto;
 }
-.aboveKeyboardLeft {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
 
 .aboveKeyboardCenter {
   flex: 1;
@@ -91,11 +85,134 @@
 .aboveKeyboardRight {
   flex: 1;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
+  overflow-y: auto;
+  max-height: 100%;
+  background-color: rgb(169, 216, 216);
 }
 
 .history {
   overflow-y: auto;
   max-height: 100%;
+}
+
+.partial {
+  background-color: #c9b458;
+  color: white;
+  font-weight: bold;
+}
+
+.correct {
+  background-color: #6aaa64;
+  color: white;
+}
+
+.wrong {
+  background-color: #787c7e;
+  color: white;
+}
+
+.atemptsDiv {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  height: 100%;
+}
+.atemptDiv {
+  display: flex;
+  flex-direction: row;
+}
+.mini {
+  height: 30px;
+  width: 30px;
+  margin: 2px;
+  margin-top: 5px;
+}
+.greyMini {
+  background-color: #787c7e;
+}
+.greenMini {
+  background-color: #6aaa64;
+}
+.yellowMini {
+  background-color: #c9b458;
+}
+.playerNameDiv {
+  text-align: center;
+  margin-top: 30px;
+}
+.aboveKeyboardLeft {
+  flex: 1;
+  display: flex;
+  justify-content: flex-start;
+  flex-direction: column;
+  height: 100%;
+  padding-left: 30px;
+  margin-right: 0px;
+  background-color: #d4f3d2;
+}
+.gameInfo {
+  font-weight: 1000;
+  margin-bottom: 30px;
+  margin-top: 30px;
+}
+.outputChatBox {
+  width: 80%;
+  height: 30em;
+  border: 2px solid black;
+  overflow-y: auto;
+}
+.inputChatBox {
+  width: 80%;
+}
+
+.block {
+  opacity: 0.5;
+}
+
+.hideChatButton {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  background: none;
+  border: none;
+  font-size: 20px;
+}
+
+.hideLeaderboardButton {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 1000;
+  background: none;
+  border: none;
+  font-size: 20px;
+}
+
+@media (min-width: 769px) {
+  .hideChatButton {
+    display: none;
+  }
+  .hideLeaderboardButton {
+    display: none;
+  }
+}
+
+@media (max-width: 769px) {
+  .aboveKeyboardLeft {
+    position: absolute;
+    left: 0;
+  }
+  .aboveKeyboardRight {
+    position: absolute;
+    right: 0;
+  }
+}
+
+.hidden {
+  display: none;
 }

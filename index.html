@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <!DOCTYPE html>
 <html>
   <body>
@@ -13,6 +14,67 @@
   </body>
 
   <script>
+=======
+<!doctype html>
+<html>
+  <head>
+    <link rel="stylesheet" href="css/index.css" />
+    <meta charset="utf-8" />
+  </head>
+  <body>
+    <h1 class="title">WORDLE WARS</h1>
+
+    <div id="playerInfo" class="playerInfo">
+      Your Nickname:
+      <input type="text" id="playerName" class="playerNameInput" />
+    </div>
+    <div class="newLobby">
+      If you want to create a new lobby
+      <div>
+        <button id="createLobby" onclick="createLobby()" class="newLobbyButton">CREATE NEW LOBBY</button>
+      </div>
+    </div>
+
+    <div class="oldLobby">
+      If you want to join an already existing Lobby
+      <div>
+        lobbyID:
+        <input type="text" id="lobbyID" />
+
+        <button id="joinButton" onclick="joinLobby()" class="joinLobbyButton">JOIN LOBBY</button>
+      </div>
+    </div>
+  </body>
+
+  <script>
+    //const protocol = location.protocol === "https:" ? "wss" : "ws";
+    //const wsUrl = `${protocol}://${location.hostname}:3000`;
+
+    //const ws = new WebSocket(wsUrl);
+
+    const ws = new WebSocket("ws://localhost:3000");
+    ws.onopen = () => {
+      console.log("Connected to server");
+      ws.send(
+        JSON.stringify({
+          type: "JOIN_LOBBY",
+          player: playerName,
+          lobbyID: lobbyID,
+        }),
+      );
+    };
+    ws.onmessage = (event) => {
+      console.log("Message from server:", event.data);
+      const msg = JSON.parse(event.data);
+      if (msg.type == "CREATE_LOBBY") {
+        const playUrl = location.href.substr(0, location.href.lastIndexOf("/")) + "/play.html" + `?${msg.playerName}&${msg.lobbyID}`;
+        location.href = playUrl;
+      }
+    };
+    ws.onclose = () => {
+      console.log("Disconnected from server");
+    };
+>>>>>>> 527db15 (demo)
     function joinLobby() {
       const playerName = document.getElementById("playerName").value;
       const lobbyID = document.getElementById("lobbyID").value;
@@ -21,6 +83,7 @@
       const playUrl = location.href.substr(0, location.href.lastIndexOf("/")) + "/play.html" + `?${playerName}&${lobbyID}`;
       location.href = playUrl;
     }
+<<<<<<< HEAD
     const ws = new WebSocket("wss://wordlewars-production.up.railway.app");
 
     ws.onopen = () => {
@@ -55,6 +118,20 @@
         );
       }
       console.log(guessWord.value);
+=======
+
+    function createLobby() {
+      const playerName = document.getElementById("playerName").value;
+      if (playerName) {
+        console.log("create");
+        ws.send(
+          JSON.stringify({
+            type: "CREATE_LOBBY",
+            player: playerName,
+          }),
+        );
+      }
+>>>>>>> 527db15 (demo)
     }
   </script>
 </html>

@@ -1,8 +1,15 @@
 const http = require("http");
 const WebSocket = require("ws");
+const fs = require("fs");
 
 const server = http.createServer();
 const wss = new WebSocket.Server({ server });
+
+//const PORT = process.env.PORT || 3000;
+const PORT = 3000;
+server.listen(PORT, () => {
+  console.log(`server running on http:/localhost:${PORT}`);
+});
 
 const lobbies = {};
 wss.on("connection", (ws) => {
@@ -17,7 +24,7 @@ wss.on("connection", (ws) => {
       if (!lobbies[data.lobbyID]) {
         lobbies[data.lobbyID] = {
           players: new Map(),
-          word: "apple", // temporary hardcoded
+          word: randomWord(),
           finished: false,
         };
       }
@@ -27,12 +34,14 @@ wss.on("connection", (ws) => {
         attempts: [],
         solved: false,
       });
+      const lobbyState = leaderboardInfo(data.lobbyID);
+      //ws.send(JSON.stringify(lobbyState));
+      brodcastToLobby(data.lobbyID, lobbyState);
       brodcastToLobby(data.lobbyID, { type: "newPlayer", playerName: data.player, message: "player has joined the lobby" });
     }
 
     if (data.type == "GUESS") {
       console.log(data.guessWord);
-      var wordEvaluation = validateWord(data.guessWord, lobbies[data.lobbyID].word);
       const lobby = lobbies[data.lobbyID];
       const player = lobby.players.get(ws);
       player.attempts.push({
@@ -43,15 +52,30 @@ wss.on("connection", (ws) => {
 
       ws.send(JSON.stringify(player.attempts));
       console.log(player.attempts);
-      attemptsForOthers = [];
+      let attemptsForOthers = [];
       for (attempt of player.attempts) {
         console.log(attempt);
         attemptsForOthers.push(attempt.evaluation);
       }
       brodcastToLobby(data.lobbyID, { type: "newGuess", playerName: data.player, evaluation: attemptsForOthers });
-      console.log(data.lobbyID);
-      console.log(data.player);
-      console.log(attemptsForOthers);
+      console.log(lobbies);
+    }
+    if (data.type == "CREATE_LOBBY") {
+      const msg = {
+        type: "CREATE_LOBBY",
+        playerName: data.player,
+        lobbyID: randomWord(),
+      };
+      lobbies[msg.lobbyID] = {
+        players: new Map(),
+        word: randomWord(),
+        finished: false,
+      };
+
+      ws.send(JSON.stringify(msg));
+    }
+    if (data.type == "MESSAGE") {
+      brodcastToLobby(ws.lobbyID, { type: "MESSAGE", message: data.message });
     }
   });
   ws.on("close", () => {
@@ -63,11 +87,6 @@ wss.on("connection", (ws) => {
       brodcastToLobby(ws.lobbyID, { type: "playerLeft", playerName: ws.playerName, message: "player has left the lobby" });
     }
   });
-});
-
-const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => {
-  console.log(`server running on http:/localhost:${PORT}`);
 });
 
 function brodcastToLobby(lobbyID, message) {
@@ -114,4 +133,34 @@ function validateWord(guessWord, trueWord) {
   }
 
   return evaluation;
+}
+
+const words = fs.readFileSync("besede/eng.txt", "utf8");
+let wordList = words.split("\n");
+let newWordList = [];
+for (let word of wordList) {
+  if (word.length == 5) {
+    newWordList.push(word.toLowerCase());
+  }
+}
+function randomWord() {
+  return newWordList[Math.round(Math.random() * newWordList.length)];
+}
+function leaderboardInfo(lobbyID) {
+  const lobby = lobbies[lobbyID];
+  if (!lobby) return null;
+
+  const players = [];
+
+  for (const [ws, player] of lobby.players) {
+    players.push({
+      playerName: player.name,
+      evaluations: player.attempts.map((a) => a.evaluation),
+    });
+  }
+
+  return {
+    type: "lobbyState",
+    players,
+  };
 }

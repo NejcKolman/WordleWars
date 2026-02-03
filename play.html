@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
   <head>
     <link rel="stylesheet" href="css/play.css" />
@@ -9,8 +9,17 @@
   </head>
 
   <body>
+    <button id="hideChatButton" class="hideChatButton" onclick="hideChat()">☰</button>
+    <button id="hideLeaderboardButton" class="hideLeaderboardButton" onclick="hideLeaderboard()">🏆</button>
     <div class="aboveKeyboard">
-      <div class="aboveKeyboardLeft">player2</div>
+      <div class="aboveKeyboardLeft">
+        <div id="gameInfo" class="gameInfo"></div>
+        <div id="chatBox" class="chatBox">
+          <div id="outputChatBox" class="outputChatBox"></div>
+          <input type="text" id="inputChatBox" class="inputChatBox" placeholder="Type a message" on />
+        </div>
+        <div id="gameButtons"></div>
+      </div>
       <div class="aboveKeyboardCenter">
         <div class="history">
           <table id="guesses"></table>
@@ -27,7 +36,7 @@
           </tr>
         </table>
       </div>
-      <div class="aboveKeyboardRight">player3</div>
+      <div class="aboveKeyboardRight"></div>
     </div>
     <div class="keyboardArea">
       <div class="keyboardContainer"></div>
@@ -37,7 +46,18 @@
   <script>
     const playerName = location.href.split("?")[1].split("&")[0];
     const lobbyID = location.href.split("?")[1].split("&")[1];
-    const ws = new WebSocket("wss://wordlewars-production.up.railway.app");
+    const myNameDiv = document.createElement("div");
+    myNameDiv.innerHTML = "My Nickname: " + playerName;
+    const lobbyIDDiv = document.createElement("div");
+    lobbyIDDiv.innerHTML = "Lobby ID: " + lobbyID;
+    document.getElementById("gameInfo").appendChild(myNameDiv);
+    document.getElementById("gameInfo").appendChild(lobbyIDDiv);
+
+    //const protocol = location.protocol === "https:" ? "wss" : "ws";
+    //const wsUrl = `${protocol}://${location.hostname}:3000`;
+    //const ws = new WebSocket(wsUrl);
+    const ws = new WebSocket("ws://localhost:3000");
+    //const ws = new WebSocket("wss://wordlewars-production.up.railway.app");
 
     ws.onopen = () => {
       console.log("Connected to server");
@@ -47,12 +67,13 @@
             type: "JOIN_LOBBY",
             player: playerName,
             lobbyID: lobbyID,
-          })
+          }),
         );
       }
     };
     ws.onmessage = (event) => {
       const msg = JSON.parse(event.data);
+
       console.log("Message from server:", msg);
       if (!msg.type) {
         if (msg[0].type == "myGuess") {
@@ -66,40 +87,51 @@
             const color = evaluation[i];
             console.log(word);
             let cell = document.createElement("td");
+            let key = document.getElementById("button" + letter);
             cell.textContent = letter;
             cell.classList.add("blank");
             console.log(color);
-            if (color == "S") {
-              cell.classList.add("siva");
+
+            if (color == "Z") {
+              cell.classList.add("zelena");
+              if (!key.classList.contains("correct")) {
+                key.classList.add("correct");
+              }
             } else if (color == "R") {
               cell.classList.add("rumena");
-            } else if (color == "Z") {
-              cell.classList.add("zelena");
+              if (!key.classList.contains("correct") & !key.classList.contains("partial")) {
+                key.classList.add("partial");
+              }
+            } else if (color == "S") {
+              cell.classList.add("siva");
+              if (!key.classList.contains("correct") & !key.classList.contains("partial") & !key.classList.contains("wrong")) {
+                key.classList.add("wrong");
+              }
             }
             row.appendChild(cell);
             historyTable.appendChild(row);
           }
+          if (evaluation == "ZZZZZ") {
+            guessedCorrectly(msg.length);
+          }
         }
+      } else if (msg.type == "lobbyState") {
+        const players = msg.players;
+        console.log("update");
+        updateLeaderboard(players);
+      } else if (msg.type == "newGuess") {
+        updateLeaderboard2(msg);
+      } else if (msg.type == "playerLeft") {
+        console.log("PL");
+        removePlayer(msg);
+      } else if (msg.type == "MESSAGE") {
+        const message = msg.message;
+        writeInChat(message);
       }
     };
     ws.onclose = () => {
       console.log("Disconnected from server");
     };
-
-    function guessClick() {
-      if (guessWord.length != 5) {
-        console.log("the word needs 5 letters");
-      } else {
-        ws.send(
-          JSON.stringify({
-            type: "GUESS",
-            player: playerName,
-            lobbyID: lobbyID,
-            guessWord: guessWord,
-          })
-        );
-      }
-    }
   </script>
 </html>
 <script src="js/play.js" type="text/javascript"></script>

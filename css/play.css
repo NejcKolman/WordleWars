@@ -17,13 +17,19 @@
 }
 
 .rumena {
-  background-color: yellow;
+  background-color: #c9b458;
+  border-color: white;
+  color: white;
 }
 .siva {
-  background-color: grey;
+  background-color: #787c7e;
+  border-color: white;
+  color: white;
 }
 .zelena {
-  background-color: green;
+  background-color: #6aaa64;
+  border-color: white;
+  color: white;
 }
 .keyboardArea {
   position: fixed;
@@ -81,6 +87,7 @@
   align-items: center;
   flex-direction: column;
   height: 100%;
+  z-index: -1000;
 }
 .aboveKeyboardRight {
   flex: 1;
@@ -94,8 +101,10 @@
 }
 
 .history {
+  display: flex;
   overflow-y: auto;
   max-height: 100%;
+  flex-direction: column-reverse;
 }
 
 .partial {
@@ -161,9 +170,10 @@
 }
 .outputChatBox {
   width: 80%;
-  height: 30em;
+  height: 20em;
   border: 2px solid black;
   overflow-y: auto;
+  background-color: white;
 }
 .inputChatBox {
   width: 80%;
@@ -190,7 +200,6 @@
   z-index: 1000;
   background: none;
   border: none;
-  font-size: 20px;
 }
 
 @media (min-width: 769px) {
@@ -206,13 +215,15 @@
   .aboveKeyboardLeft {
     position: absolute;
     left: 0;
+    display: none;
   }
   .aboveKeyboardRight {
     position: absolute;
     right: 0;
+    display: none;
   }
 }
 
 .hidden {
-  display: none;
+  display: flex;
 }

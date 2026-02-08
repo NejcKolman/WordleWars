@@ -41,24 +41,25 @@ wss.on("connection", (ws) => {
     }
 
     if (data.type == "GUESS") {
-      console.log(data.guessWord);
-      const lobby = lobbies[data.lobbyID];
-      const player = lobby.players.get(ws);
-      player.attempts.push({
-        type: "myGuess",
-        word: data.guessWord,
-        evaluation: validateWord(data.guessWord, lobbies[data.lobbyID].word),
-      });
+      if (newWordList2.includes(data.guessWord)) {
+        const lobby = lobbies[data.lobbyID];
+        const player = lobby.players.get(ws);
+        player.attempts.push({
+          type: "myGuess",
+          word: data.guessWord,
+          evaluation: validateWord(data.guessWord, lobbies[data.lobbyID].word),
+        });
 
-      ws.send(JSON.stringify(player.attempts));
-      console.log(player.attempts);
-      let attemptsForOthers = [];
-      for (attempt of player.attempts) {
-        console.log(attempt);
-        attemptsForOthers.push(attempt.evaluation);
+        ws.send(JSON.stringify(player.attempts));
+        console.log(player.attempts);
+        let attemptsForOthers = [];
+        for (attempt of player.attempts) {
+          console.log(attempt);
+          attemptsForOthers.push(attempt.evaluation);
+        }
+        brodcastToLobby(data.lobbyID, { type: "newGuess", playerName: data.player, evaluation: attemptsForOthers });
+        console.log(lobbies);
       }
-      brodcastToLobby(data.lobbyID, { type: "newGuess", playerName: data.player, evaluation: attemptsForOthers });
-      console.log(lobbies);
     }
     if (data.type == "CREATE_LOBBY") {
       const msg = {
@@ -135,12 +136,21 @@ function validateWord(guessWord, trueWord) {
   return evaluation;
 }
 
-const words = fs.readFileSync("besede/eng.txt", "utf8");
-let wordList = words.split("\n");
+const words = fs.readFileSync("besede/wordleWords.txt", "utf8");
+let wordList = words.split(" ");
 let newWordList = [];
 for (let word of wordList) {
   if (word.length == 5) {
-    newWordList.push(word.toLowerCase());
+    newWordList.push(word.toUpperCase());
+  }
+}
+
+const words2 = fs.readFileSync("besede/eng.txt", "utf8");
+let wordList2 = words2.split("\n");
+let newWordList2 = [];
+for (let word of wordList2) {
+  if (word.length == 5) {
+    newWordList2.push(word.toUpperCase());
   }
 }
 function randomWord() {

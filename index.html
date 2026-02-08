@@ -80,5 +80,18 @@
         );
       }
     }
+
+    const nameInput = document.getElementById("playerName");
+    const createLobbyButton = document.getElementById("createLobby");
+    const joinButton = document.getElementById("joinButton");
+    nameInput.addEventListener("input", () => {
+      if (nameInput.value == "") {
+        createLobbyButton.disabled = true;
+        joinButton.disabled = true;
+      } else {
+        createLobbyButton.disabled = false;
+        joinButton.disabled = false;
+      }
+    });
   </script>
 </html>

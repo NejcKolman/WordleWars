@@ -1,6 +1,6 @@
 let guessWord = "";
-const keys = ["q", "w", "e", "r", "t", "z", "u", "i", "o", "p", "š", "a", "s", "d", "f", "g", "h", "j", "k", "l", "č", "ž", "Enter", "y", "x", "c", "v", "b", "n", "m", "⌫"];
-
+//const keys = ["q", "w", "e", "r", "t", "z", "u", "i", "o", "p", "š", "a", "s", "d", "f", "g", "h", "j", "k", "l", "č", "ž", "⏎", "y", "x", "c", "v", "b", "n", "m", "⌫"];
+const keys = ["Q", "W", "E", "R", "T", "Z", "U", "I", "O", "P", "Š", "A", "S", "D", "F", "G", "H", "J", "K", "L", "M", "Ž", "⏎", "Y", "X", "C", "V", "B", "N", "M", "⌫"];
 const L1 = document.getElementById("L1");
 const L2 = document.getElementById("L2");
 const L3 = document.getElementById("L3");
@@ -15,7 +15,7 @@ for (let key of keys) {
   keyButton.addEventListener("click", () => writeGuess(key));
 
   document.querySelector(".keyboardContainer").appendChild(keyButton);
-  if (key == "š" || key == "ž") {
+  if (key == "Š" || key == "Ž") {
     document.querySelector(".keyboardContainer").appendChild(document.createElement("br"));
   }
 }
@@ -29,15 +29,15 @@ document.addEventListener("keydown", function (event) {
 });
 
 function writeGuess(key) {
-  if ("abcčdefghijklmnoprsštuvzžqwyx".includes(key)) {
+  if ("abcčdefghijklmnoprsštuvzžqwyx".includes(key.toLowerCase())) {
     if (guessWord.length < 5) {
-      guessWord += key;
+      guessWord += key.toUpperCase();
     }
   }
-  if (key == "⌫") {
+  if (key == "⌫" || key == "Backspace") {
     guessWord = guessWord.slice(0, -1);
   }
-  if (key == "Enter") {
+  if (key == "Enter" || key == "⏎") {
     guessClick();
     guessWord = "";
   }
@@ -62,9 +62,12 @@ window.addEventListener("resize", updateAboveKeyboard);
 updateAboveKeyboard();
 let finnished = false;
 console.log(finnished);
+
 function guessClick() {
   if (guessWord.length != 5) {
     console.log("the word needs 5 letters");
+    //} else if (!wordList.includes(guessWord)) {
+    //console.log("word doesnt exist");
   } else if (finnished == false) {
     ws.send(
       JSON.stringify({

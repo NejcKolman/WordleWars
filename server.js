@@ -5,8 +5,8 @@ const fs = require("fs");
 const server = http.createServer();
 const wss = new WebSocket.Server({ server });
 
-const PORT = process.env.PORT || 3000;
-//const PORT = 3000;
+//const PORT = process.env.PORT || 3000;
+const PORT = 3000;
 server.listen(PORT, () => {
   console.log(`server running on http:/localhost:${PORT}`);
 });
@@ -51,14 +51,14 @@ wss.on("connection", (ws) => {
         });
 
         ws.send(JSON.stringify(player.attempts));
-        console.log(player.attempts);
+        //console.log(player.attempts);
         let attemptsForOthers = [];
         for (attempt of player.attempts) {
-          console.log(attempt);
+          //console.log(attempt);
           attemptsForOthers.push(attempt.evaluation);
         }
         brodcastToLobby(data.lobbyID, { type: "newGuess", playerName: data.player, evaluation: attemptsForOthers });
-        console.log(lobbies);
+        //console.log(lobbies);
       }
     }
     if (data.type == "CREATE_LOBBY") {
@@ -72,7 +72,7 @@ wss.on("connection", (ws) => {
         word: randomWord(),
         finished: false,
       };
-
+      console.log("word to guess is: " + lobbies[msg.lobbyID].word);
       ws.send(JSON.stringify(msg));
     }
     if (data.type == "MESSAGE") {
@@ -81,7 +81,7 @@ wss.on("connection", (ws) => {
   });
   ws.on("close", () => {
     console.log("A player disconnected");
-    console.log(ws.lobbyID);
+    //console.log(ws.lobbyID);
     if (ws.lobbyID && lobbies[ws.lobbyID]) {
       lobbies[ws.lobbyID].players.delete(ws);
 
@@ -154,7 +154,7 @@ for (let word of wordList2) {
   }
 }
 function randomWord() {
-  return newWordList[Math.round(Math.random() * newWordList.length)];
+  return newWordList[Math.floor(Math.random() * newWordList.length)];
 }
 function leaderboardInfo(lobbyID) {
   const lobby = lobbies[lobbyID];

@@ -56,8 +56,8 @@
     //const protocol = location.protocol === "https:" ? "wss" : "ws";
     //const wsUrl = `${protocol}://${location.hostname}:3000`;
     //const ws = new WebSocket(wsUrl);
-    //const ws = new WebSocket("ws://localhost:3000");
-    const ws = new WebSocket("wss://wordlewars-production.up.railway.app");
+    const ws = new WebSocket("ws://localhost:3000");
+    //const ws = new WebSocket("wss://wordlewars-production.up.railway.app");
 
     ws.onopen = () => {
       console.log("Connected to server");
